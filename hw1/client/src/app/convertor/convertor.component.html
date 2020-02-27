@@ -1,0 +1,36 @@
+<div class="page-title">
+    <h1>Currency exchange rate</h1>
+</div>
+<div class="wrapper-card">
+    <div class="card card-container text-center">
+        <div class="card-header">
+            Your base convertor is preselected to <b>{{localCurrency}}</b> because of your IP address.
+        </div>
+        <div class="card-body">
+            <h5 class="card-title" style="font-weight: lighter;">Convertor</h5>
+            <p class="card-text">Enter an amount & select a country code</p>
+            <div class="custom-form">
+                <input class="form-control" type="number" [(ngModel)]="amount" (ngModelChange)="valueChange()">
+                <br>
+                <select class=" custom-select " [(ngModel)]="toCurrency" (ngModelChange)="valueChange()">
+          <option *ngFor=" let item of currencies" value={{item}}>{{item}}
+          </option>
+        </select>
+            </div>
+            <br>
+            <button class="btn btn-info" (click)="submit()">Exchange</button>
+            <br> <br>
+            <div class="result " style="font-weight: lighter; ">
+                <b>{{amount}} {{localCurrency}}</b> = <b>{{result}} {{toCurrency}}</b>
+            </div>
+            <div class="result " style="font-weight: lighter; ">
+                <b>{{amount}} {{toCurrency}}</b> = <b> {{result_reverse}} {{localCurrency}}</b>
+            </div>
+        </div>
+        <div class="card-footer text-right ">
+            <a [routerLink]="['/metrics']" routerLinkActive="router-link-active" class="btn btn-light" style="font-weight: lighter;">METRICS</a>
+        </div>
+    </div>
+</div>
+
+<div id="map"></div>

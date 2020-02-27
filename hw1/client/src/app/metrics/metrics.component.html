@@ -1,0 +1,21 @@
+<div class="page-title">
+    <h1>Monitoring of running web services</h1>
+</div>
+<div class="wrapper-card">
+    <div class="card-container"></div>
+    <div class="card card-container">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" [routerLink]="['/logs']" routerLinkActive="router-link-active">LOGS</a>
+                </li>
+            </ul>
+        </div>
+        <div class=" card-body ">
+            <span style="font-weight:lighter; " [innerHTML]="metrics | sanitizeHtml "></span>
+        </div>
+        <div class="card-footer text-left ">
+            <a [routerLink]="[ ''] " class="btn btn-light " style="font-weight: lighter; ">EXCHANGE</a>
+        </div>
+    </div>
+</div>
