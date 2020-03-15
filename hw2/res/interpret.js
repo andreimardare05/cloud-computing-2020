@@ -3,24 +3,48 @@ const parser = require('url')
 
 exports.get_request = function(req, res, db) {
     const url = parser.parse(req.url, true)
-    const url_items = url.pathname.split('/')
-        .filter(item => item.length > 0);
+    const url_items = get_url_items(req.url)
     let query = JSON.parse(JSON.stringify(url.query));
-    console.log(query)
     if (url_items.length > 1 && !Object.keys(query).length) {
         query = {
-            'id': url_items[1]
+            '_id': url_items[1]
         }
         service.get_specific_item(res, db, url_items[0], query)
-    } else if (url_items.length == 1 && !Object.keys(query).length)
-        service.get_collection(res, db, url_items[0])
-    else if (url_items.length == 1 && Object.keys(query).length)
-        service.get_specific_item(res, db, url_items[0], query)
+    } else if (url_items.length == 1) {
+        service.get_collection(res, db, url_items[0]);
+    } else if (url_items.length == 1 && Object.keys(query).length)
+        service.get_specific_item(res, db, url_items[0], query);
+    else
+        invalid_request(res)
 };
 
+exports.post_request = function(req, res, db, object) {
+    const url_items = get_url_items(req.url)
+    service.add_item_collection(res, db, url_items[0], object)
+}
 
+exports.put_request = function(req, res, db, object) {
+    const url_items = get_url_items(req.url)
+    service.edit_item_collection(res, db, url_items[0], url_items[1], object)
+}
 
-function log_request(method, pathname) {
-    console.log('Request Type: ' +
-        method + '\t Endpoint: ' + pathname);
+exports.delete_request = function(req, res, db) {
+    const url_items = get_url_items(req.url)
+    service.delete_item_collection(res, db, url_items[0], url_items[1])
+}
+
+exports.invalid_request = function(res) {
+    res.statusCode = 404;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('The request you\'ve entered is invalid');
+};
+
+exports.log_request = function(method, pathname) {
+    console.log('Endpoint: ' + pathname + ', Request type: ' + method);
+}
+
+function get_url_items(request_url) {
+    const url = parser.parse(request_url, true)
+    return url.pathname.split('/')
+        .filter(item => item.length > 0);
 }
