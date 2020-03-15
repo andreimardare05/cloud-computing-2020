@@ -63,8 +63,12 @@ exports.edit_item_collection = function(res, db, name_of_collection, id, object)
 exports.delete_item_collection = function(res, db, name_of_collection, id) {
     console.log(id, name_of_collection)
     db.collection(name_of_collection).deleteOne({ _id: new ObjectID(id) }, function(err, results) {
+        console.log(results)
         if (err) {
-            throw err
+            console.log(err)
+            res.statusCode = 404
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ result: "An error has occured!" }))
         } else {
             res.statusCode = 200
             res.setHeader('Content-Type', 'application/json');
