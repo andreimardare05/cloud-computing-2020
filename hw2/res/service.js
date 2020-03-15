@@ -8,13 +8,16 @@ exports.get_collection = function(res, db, name_of_collection) {
                 res.setHeader('Content-Type', 'application/json');
                 res.end(JSON.stringify(results));
             } else {
-                res.statusCode = 204;
+                res.statusCode = 404;
                 res.end(JSON.stringify({ result: "There aren\'t any results for the moment in DB." }));
             }
         });
 };
 
 exports.get_specific_item = function(res, db, name_of_collection, query) {
+    if (query['_id']) {
+        query['_id'] = new ObjectID(query['_id'])
+    }
     db.collection(name_of_collection).find(query)
         .toArray(function(err, results) {
             if (results.length) {
@@ -35,7 +38,7 @@ exports.add_item_collection = function(res, db, name_of_collection, object) {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ result: "An error has occured!" }))
         } else {
-            res.statusCode = 200
+            res.statusCode = 201
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ result: "Entry was inserted with success!" }))
         }
@@ -58,11 +61,10 @@ exports.edit_item_collection = function(res, db, name_of_collection, id, object)
 }
 
 exports.delete_item_collection = function(res, db, name_of_collection, id) {
+    console.log(id, name_of_collection)
     db.collection(name_of_collection).deleteOne({ _id: new ObjectID(id) }, function(err, results) {
         if (err) {
-            res.statusCode = 404
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ result: "An error has occured!" }))
+            throw err
         } else {
             res.statusCode = 200
             res.setHeader('Content-Type', 'application/json');

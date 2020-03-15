@@ -1,4 +1,4 @@
-const service = require('./utilities')
+const service = require('./service')
 const parser = require('url')
 
 exports.get_request = function(req, res, db) {
@@ -6,38 +6,53 @@ exports.get_request = function(req, res, db) {
     const url_items = get_url_items(req.url)
     let query = JSON.parse(JSON.stringify(url.query));
     if (url_items.length > 1 && !Object.keys(query).length) {
-        query = {
-            '_id': url_items[1]
-        }
+        query['_id'] = url_items[1]
+        console.log(query)
         service.get_specific_item(res, db, url_items[0], query)
-    } else if (url_items.length == 1) {
+    } else if (url_items.length == 1 && !Object.keys(query).length) {
+        console.log(query)
         service.get_collection(res, db, url_items[0]);
-    } else if (url_items.length == 1 && Object.keys(query).length)
+    } else if (url_items.length == 1 && Object.keys(query).length) {
+        console.log(query)
         service.get_specific_item(res, db, url_items[0], query);
-    else
+    } else
         invalid_request(res)
 };
 
 exports.post_request = function(req, res, db, object) {
     const url_items = get_url_items(req.url)
-    service.add_item_collection(res, db, url_items[0], object)
+    if (url_items.length == 1)
+        service.add_item_collection(res, db, url_items[0], object)
+    else invalid_request(res)
 }
 
 exports.put_request = function(req, res, db, object) {
     const url_items = get_url_items(req.url)
-    service.edit_item_collection(res, db, url_items[0], url_items[1], object)
+    if (url_items.length == 2) {
+        service.edit_item_collection(res, db, url_items[0], url_items[1], object)
+    } else if (url_items == 1)
+        not_allowed(res)
+    else invalid_request(res)
 }
 
 exports.delete_request = function(req, res, db) {
     const url_items = get_url_items(req.url)
-    service.delete_item_collection(res, db, url_items[0], url_items[1])
+    if (url_items.length == 2) {
+        service.delete_item_collection(res, db, url_items[0], url_items[1])
+    } else if (url_items == 1)
+        not_allowed(res)
+    else invalid_request(res)
 }
 
 exports.invalid_request = function(res) {
-    res.statusCode = 404;
-    res.setHeader('Content-Type', 'text/plain');
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('The request you\'ve entered is invalid');
 };
+
+exports.not_allowed = function(res) {
+    res.writeHead(405, { 'Content-Type': 'text/plain' });
+    res.end('The request you\'ve entered could not be done on a collection!');
+}
 
 exports.log_request = function(method, pathname) {
     console.log('Endpoint: ' + pathname + ', Request type: ' + method);

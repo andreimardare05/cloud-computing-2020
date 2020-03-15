@@ -51,8 +51,9 @@ try {
                     break;
                 case 'DELETE':
                     interpreter.delete_request(req, res, db);
+                    break;
                 default:
-                    interpreter.invalid_request(req, res)
+                    interpreter.invalid_request(res)
                     break;
             }
         }).listen(process.env.PORT, process.env.HOSTNAME, () => {
