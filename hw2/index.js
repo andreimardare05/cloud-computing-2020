@@ -25,7 +25,6 @@ mongo.MongoClient.connect(process.env.MONGO_CONNECTION_URL, { useNewUrlParser: t
             interpreter.log_request(req.method, req.url)
             // Handler of request GET/POST/PUT/DELETE
         try {
-
             switch (req.method) {
                 case 'GET':
                     interpreter.get_request(req, res, db);

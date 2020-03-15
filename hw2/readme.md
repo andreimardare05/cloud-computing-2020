@@ -10,7 +10,6 @@ In this solution are used: GET, POST, PUT, DELETE.
 
 In the follow link you have available an video: 
 
-
 ## Installation
 
 ```bash

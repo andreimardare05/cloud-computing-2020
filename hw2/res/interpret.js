@@ -1,6 +1,8 @@
 const service = require('./service')
 const parser = require('url')
 
+// Interpret the request and send the request forward to the service 
+
 exports.get_request = function(req, res, db) {
     const url = parser.parse(req.url, true)
     const url_items = get_url_items(req.url)
@@ -30,7 +32,7 @@ exports.put_request = function(req, res, db, object) {
     const url_items = get_url_items(req.url)
     if (url_items.length == 2) {
         service.edit_item_collection(res, db, url_items[0], url_items[1], object)
-    } else if (url_items == 1)
+    } else if (url_items.length == 1)
         not_allowed(res)
     else invalid_request(res)
 }
@@ -38,10 +40,10 @@ exports.put_request = function(req, res, db, object) {
 exports.delete_request = function(req, res, db) {
     const url_items = get_url_items(req.url)
     if (url_items.length == 2) {
-        service.delete_item_collection(res, db, url_items[0], url_items[1])
-    } else if (url_items == 1)
-        not_allowed(res)
-    else invalid_request(res)
+        service.delete_item_collection(res, db, url_items[0], url_items[1]);
+    } else if (url_items.length == 1) {
+        not_allowed(res);
+    } else invalid_request(res)
 }
 
 exports.invalid_request = function(res) {
@@ -63,3 +65,13 @@ function get_url_items(request_url) {
     return url.pathname.split('/')
         .filter(item => item.length > 0);
 }
+
+function not_allowed(res) {
+    res.writeHead(405, { 'Content-Type': 'text/plain' });
+    res.end('The request you\'ve entered could not be done on a collection!');
+}
+
+function invalid_request(res) {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('The request you\'ve entered is invalid');
+};

@@ -1,5 +1,7 @@
 var ObjectID = require('mongodb').ObjectID;
 
+// Individual request
+
 exports.get_collection = function(res, db, name_of_collection) {
     db.collection(name_of_collection).find()
         .toArray(function(err, results) {
@@ -32,47 +34,66 @@ exports.get_specific_item = function(res, db, name_of_collection, query) {
 };
 
 exports.add_item_collection = function(res, db, name_of_collection, object) {
-    db.collection(name_of_collection).insertOne(object, function(err, results) {
-        if (err) {
-            res.statusCode = 404
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ result: "An error has occured!" }))
-        } else {
-            res.statusCode = 201
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ result: "Entry was inserted with success!" }))
-        }
-    });
+    try {
+        db.collection(name_of_collection).insertOne(object, function(err, results) {
+            if (err) {
+                res.statusCode = 404
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ result: "An error has occured!" }))
+            } else {
+                res.statusCode = 201
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ result: "Entry was inserted with success!" }))
+            }
+        });
+    } catch (err) {
+        res.statusCode = 404
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ result: "An error has occured!" }))
+    }
+
 }
 
 exports.edit_item_collection = function(res, db, name_of_collection, id, object) {
-    db.collection(name_of_collection).updateOne({ _id: new ObjectID(id) }, { $set: object }, function(err, results) {
-        if (err) {
-            console.log(err)
-            res.statusCode = 404
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ result: "An error has occured!" }))
-        } else {
-            res.statusCode = 200
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ result: "Entry was updated with success!" }))
-        }
-    });
+    try {
+        db.collection(name_of_collection).updateOne({ _id: new ObjectID(id) }, { $set: object }, function(err, results) {
+            if (err) {
+                console.log(err)
+                res.statusCode = 404
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ result: "An error has occured!" }))
+            } else {
+                res.statusCode = 200
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ result: "Entry was updated with success!" }))
+            }
+        });
+    } catch (err) {
+        res.statusCode = 404
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ result: "An error has occured!" }))
+    }
 }
 
 exports.delete_item_collection = function(res, db, name_of_collection, id) {
     console.log(id, name_of_collection)
-    db.collection(name_of_collection).deleteOne({ _id: new ObjectID(id) }, function(err, results) {
-        console.log(results)
-        if (err) {
-            console.log(err)
-            res.statusCode = 404
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ result: "An error has occured!" }))
-        } else {
-            res.statusCode = 200
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ result: "Entry was deleted with success!" }))
-        }
-    });
+    try {
+        db.collection(name_of_collection).deleteOne({ _id: new ObjectID(id) }, function(err, results) {
+            console.log(results)
+            if (err) {
+                console.log(err)
+                res.statusCode = 404
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ result: "An error has occured!" }))
+            } else {
+                res.statusCode = 200
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ result: "Entry was deleted with success!" }))
+            }
+        });
+    } catch (err) {
+        res.statusCode = 404
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ result: "An error has occured!" }))
+    }
 }
